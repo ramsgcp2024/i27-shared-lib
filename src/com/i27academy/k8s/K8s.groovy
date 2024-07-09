@@ -10,9 +10,10 @@ class K8s {
     def auth_login() {
         jenkins.sh """
         echo "Connecting to Kubernates Cluster through ****JENKINS****" 
-        # gcloud auth activate-service-account jenkins@instant-droplet-410306.iam.gserviceaccount.com --key-file=${}
         gcloud compute instances list
         """
     }
 
 }
+
+// # gcloud auth activate-service-account jenkins@instant-droplet-410306.iam.gserviceaccount.com --key-file=${}
