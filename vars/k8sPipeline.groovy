@@ -55,6 +55,8 @@ def call(Map pipelineParams) {
             GKE_DEV_CLUSTER_NAME = "cart-cluster"
             GKE_DEV_ZONE = "us-west1-a"
             GKE_DEV_PROJECT = "instant-droplet-410306"
+            K8S_DEV_FILE = "eureka_dev.yaml"
+            K8S_DEV_NAMESPACE = "cart-dev-ns"
         }
         stages {
             stage('Authentication') {
@@ -62,6 +64,7 @@ def call(Map pipelineParams) {
                     echo "Executing GCP project"
                     script {
                         k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
+
                     }
                     
                 }
@@ -135,7 +138,9 @@ def call(Map pipelineParams) {
                     steps {
                         script {
                             imageValidation().call()
-                            dockerDeploy('Dev','5561','8761').call()
+                            //dockerDeploy('Dev','5561','8761').call()
+                            k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
+                            k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_DEV_NAMESPACE}")
                             echo "Deployed to Dev Environment Successfully !!!!!"
                         }
                     }
