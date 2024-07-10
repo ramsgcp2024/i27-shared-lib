@@ -24,6 +24,8 @@ class K8s {
         """
     }
 
+}
+
 //gcloud container clusters get-credentials cart-cluster --zone us-west1-a --project instant-droplet-410306
 
 // # gcloud auth activate-service-account jenkins@instant-droplet-410306.iam.gserviceaccount.com --key-file=${}
