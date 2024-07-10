@@ -11,6 +11,8 @@ class K8s {
         jenkins.sh """
         echo "Connecting to Kubernates Cluster through ****JENKINS****" 
         gcloud compute instances list
+        gcloud container clusters get-credentials cart-cluster --zone us-west1-a --project instant-droplet-410306
+        kubectl get nodes 
         """
     }
 
