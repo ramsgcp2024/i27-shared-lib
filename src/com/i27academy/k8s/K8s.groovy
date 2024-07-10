@@ -17,13 +17,12 @@ class K8s {
         """
     }
 
-    def k8sdeploy(k8sfilename, namespace)
+    def k8sdeploy(k8sfilename, namespace) {
         jenkins.sh """
         echo "Executing k8s deploy"
         kubectl apply -f ./.cicd/$k8sfilename -n $namespace 
         """
-
-}
+    }
 
 //gcloud container clusters get-credentials cart-cluster --zone us-west1-a --project instant-droplet-410306
 
