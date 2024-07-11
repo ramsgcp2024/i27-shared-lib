@@ -138,9 +138,10 @@ def call(Map pipelineParams) {
                     steps {
                         script {
                             imageValidation().call()
+                            def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                             //dockerDeploy('Dev','5561','8761').call()
                             k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
-                            k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_DEV_NAMESPACE}")
+                            k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_DEV_NAMESPACE}", docker_image)
                             echo "Deployed to Dev Environment Successfully !!!!!"
                         }
                     }
