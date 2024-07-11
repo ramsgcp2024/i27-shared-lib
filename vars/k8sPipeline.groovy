@@ -52,7 +52,7 @@ def call(Map pipelineParams) {
             DOCKER_HUB = "docker.io/ramsgcp2024"
             DOCKER_CREDS = credentials('docker_creds')
             //DOCKER_HOST_IP = 0.0.0.0
-            GKE_DEV_CLUSTER_NAME = "cart-dev-ns"
+            GKE_DEV_CLUSTER_NAME = "cart-dev-ns" //cart-cluster
             GKE_DEV_ZONE = "us-west1-a"
             GKE_DEV_PROJECT = "instant-droplet-410306"
             K8S_DEV_FILE = "eureka_dev.yaml"
