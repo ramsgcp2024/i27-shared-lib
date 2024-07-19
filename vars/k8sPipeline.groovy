@@ -56,6 +56,9 @@ def call(Map pipelineParams) {
             GKE_DEV_ZONE = "us-west1-a"
             GKE_DEV_PROJECT = "instant-droplet-410306"
             K8S_DEV_FILE = "eureka_dev.yaml"
+            K8S_TST_FILE = "eureka_tst.yaml"
+            K8S_STAGE_FILE = "eureka_stage.yaml"
+            K8S_PROD_FILE = "eureka_prod.yaml"
             K8S_DEV_NAMESPACE = "cart-dev-ns"
             K8S_TST_NAMESPACE = "cart-tst-ns"
             K8S_STAGE_NAMESPACE = "cart-stage-ns"
@@ -145,7 +148,7 @@ def call(Map pipelineParams) {
                             def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                             k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
                             k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_DEV_NAMESPACE}", docker_image)
-                            echo "Deployed to Dev Environment Successfully !!!!!"
+                            echo "Deployed to DEV Environment Successfully !!!!!"
                         }
                     }
                 }
@@ -163,8 +166,8 @@ def call(Map pipelineParams) {
                             //dockerDeploy('Test','6561','8761').call()
                             def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                             k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
-                            k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_TST_NAMESPACE}", docker_image)
-                            echo "Deployed to Dev Environment Successfully !!!!!"
+                            k8s.k8sdeploy("${env.K8S_TST_FILE}", "${env.K8S_TST_NAMESPACE}", docker_image)
+                            echo "Deployed to TEST Environment Successfully !!!!!"
                         }
                     }
                 }
@@ -182,8 +185,8 @@ def call(Map pipelineParams) {
                             //dockerDeploy('Preprod','7561','8761').call()
                             def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                             k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
-                            k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_STAGE_NAMESPACE}", docker_image)
-                            echo "Deployed to Dev Environment Successfully !!!!!"
+                            k8s.k8sdeploy("${env.K8S_STAGE_FILE}", "${env.K8S_STAGE_NAMESPACE}", docker_image)
+                            echo "Deployed to STAGE Environment Successfully !!!!!"
                         }
                     }
                 }
@@ -209,8 +212,8 @@ def call(Map pipelineParams) {
                             //dockerDeploy('Prod','8561','8761').call()
                             def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                             k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
-                            k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_PROD_NAMESPACE}", docker_image)
-                            echo "Deployed to Dev Environment Successfully !!!!!"
+                            k8s.k8sdeploy("${env.K8S_PROD_FILE}", "${env.K8S_PROD_NAMESPACE}", docker_image)
+                            echo "Deployed to PRODUCTION Environment Successfully !!!!!"
                         }
                     }
                 }
@@ -282,12 +285,12 @@ def dockerBuildandPush() {
             ls -la
             pwd
             cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd/
-            echo "Listing files in .cicd folder"
-            ls -la ./.cicd/
+            # echo "Listing files in .cicd folder"
+            # ls -la ./.cicd/
             echo "********************** Building DOCKER Image ***********************"
             docker build --force-rm --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} .cicd/.
             # docker build -t abc .
-            docker images
+            # docker images
             echo "********************** DOCKER Login ***********************"
             docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
             echo "********************** DOCKER Push ***********************"
