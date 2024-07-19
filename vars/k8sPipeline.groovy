@@ -57,6 +57,9 @@ def call(Map pipelineParams) {
             GKE_DEV_PROJECT = "instant-droplet-410306"
             K8S_DEV_FILE = "eureka_dev.yaml"
             K8S_DEV_NAMESPACE = "cart-dev-ns"
+            K8S_TST_NAMESPACE = "cart-tst-ns"
+            K8S_STAGE_NAMESPACE = "cart-stage-ns"
+            K8S_PROD_NAMESPACE = "cart-prod-ns"
         }
         stages {
             stage('Authentication') {
@@ -137,9 +140,9 @@ def call(Map pipelineParams) {
                     }
                     steps {
                         script {
+                            //dockerDeploy('Dev','5561','8761').call()
                             imageValidation().call()
                             def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                            //dockerDeploy('Dev','5561','8761').call()
                             k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
                             k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_DEV_NAMESPACE}", docker_image)
                             echo "Deployed to Dev Environment Successfully !!!!!"
@@ -157,8 +160,11 @@ def call(Map pipelineParams) {
                     steps {
                         script {
                             imageValidation().call()
-                            dockerDeploy('Test','6561','8761').call()
-                            echo "Deployed to Test Environment Successfully !!!!!"
+                            //dockerDeploy('Test','6561','8761').call()
+                            def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                            k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
+                            k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_TST_NAMESPACE}", docker_image)
+                            echo "Deployed to Dev Environment Successfully !!!!!"
                         }
                     }
                 }
@@ -173,8 +179,11 @@ def call(Map pipelineParams) {
                     steps {
                         script {
                             imageValidation().call()
-                            dockerDeploy('Preprod','7561','8761').call()
-                            echo "Deployed to Preprod Environment Successfully !!!!!"
+                            //dockerDeploy('Preprod','7561','8761').call()
+                            def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                            k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
+                            k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_STAGE_NAMESPACE}", docker_image)
+                            echo "Deployed to Dev Environment Successfully !!!!!"
                         }
                     }
                 }
@@ -197,8 +206,11 @@ def call(Map pipelineParams) {
                         }
                         script {
                             imageValidation().call()
-                            dockerDeploy('Prod','8561','8761').call()
-                            echo "Deployed to Prod Environment Successfully !!!!!"
+                            //dockerDeploy('Prod','8561','8761').call()
+                            def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                            k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
+                            k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_PROD_NAMESPACE}", docker_image)
+                            echo "Deployed to Dev Environment Successfully !!!!!"
                         }
                     }
                 }
