@@ -25,6 +25,13 @@ class K8s {
         """
     }
 
+    def k8sHelmChartDeploy() {
+        jenkins.sh """
+            echo " *********** Helm chart is calling ********* "
+            helm version
+        """
+    }
+
 }
 
 //gcloud container clusters get-credentials cart-cluster --zone us-west1-a --project instant-droplet-410306
