@@ -231,6 +231,11 @@ def call(Map pipelineParams) {
                             echo "Deployed to PRODUCTION Environment Successfully !!!!!"
                         }
                     }
+                stage ('Clean') {
+                    steps {
+                        cleanWs()
+                    }
+                }
                 }
 
             }

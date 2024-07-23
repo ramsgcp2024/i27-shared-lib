@@ -29,6 +29,7 @@ class K8s {
         jenkins.sh """
             echo " *********** Helm chart is calling ********* "
             helm version
+            
             echo " ****************** Helm Installation ****************** "
             helm install ${appname}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml --set image.tag=${imageTag} ${helmChartPath}
         """
