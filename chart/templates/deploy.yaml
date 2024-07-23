@@ -14,5 +14,5 @@ spec:
         name: {{ .Values.name }}  #i27-eureka-dev
     spec:
       containers:
-        - image: # registryname/reponame/appname:tagname
+        - image: "{{ .Values.image.name }}:{{ .Values.image.tag }}" # registryname/reponame/appname:tagname
           name: {{ .Values.name }}
