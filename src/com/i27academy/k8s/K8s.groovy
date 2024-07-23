@@ -29,9 +29,16 @@ class K8s {
         jenkins.sh """
             echo " *********** Helm chart is calling ********* "
             helm version
-            
-            echo " ****************** Helm Installation ****************** "
+            echo "Verifying if chart exists"
+            if helm list | grep -q "${appname}-${env}-chart"; then
+            echo "This chart exists !!!!!"
+            echo "Upgrading HELM Chart as per requirement !!!!!!"
+            helm upgrade ${appname}-${env}-chart -f ./cicd/k8s/values_${env}.yaml --set image.tag=${imageTag} ${helmChartPath}
+            else
+            echo " ****************** Helm Does not exists !!! ****************** "
+            echo " ****************** Helm Installing new chart !!! ****************** "
             helm install ${appname}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml --set image.tag=${imageTag} ${helmChartPath}
+            fi
         """
     }
 
