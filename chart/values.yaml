@@ -10,3 +10,4 @@ image:
   name: xyz
   tag: devtag
 targetport: 8761
+namespace: testing

@@ -25,13 +25,24 @@ class K8s {
         """
     }
 
-    def k8sHelmChartDeploy() {
+    def k8sHelmChartDeploy(appname, env, helmChartPath, imageTag) {
         jenkins.sh """
             echo " *********** Helm chart is calling ********* "
             helm version
+            echo " ****************** Helm Installation ****************** "
+            helm install ${appname}-${env}-chart -f ./.cicd/k8s/values_${env}.yaml --set image.tag=${imageTag} ${helmChartPath}
         """
     }
 
+    def gitClone() {
+        jenkins.sh """
+        echo " ******** Executing git clone groovy method ************ "
+        git clone -b main https://github.com/ramsgcp2024/i27-shared-lib.git
+        echo "listing the file after clone"
+        """
+    }
+
+    
 }
 
 //gcloud container clusters get-credentials cart-cluster --zone us-west1-a --project instant-droplet-410306

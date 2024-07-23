@@ -63,8 +63,21 @@ def call(Map pipelineParams) {
             K8S_TST_NAMESPACE = "cart-tst-ns"
             K8S_STAGE_NAMESPACE = "cart-stage-ns"
             K8S_PROD_NAMESPACE = "cart-prod-ns"
+            HELM_PATH = "${WORKSPACE}/i27-shared-lib/chart"
+            DEV_ENV = "dev"
+            TST_ENV = "tst"
+            STAGE_ENV  = "stage"
+            PROD_ENV = "prod"
         }
         stages {
+            stage('Checkout') {
+                steps {
+                    println("Checkout: Cloning git repo for I27-Share-Library *******")
+                    script() {
+                        k8s.gitClone()
+                    }
+                }
+            }
             stage('Authentication') {
                 steps {
                     echo "Executing GCP project"
@@ -148,7 +161,8 @@ def call(Map pipelineParams) {
                             def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                             //k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
                             //k8s.k8sdeploy("${env.K8S_DEV_FILE}", "${env.K8S_DEV_NAMESPACE}", docker_image)
-                            k8s.k8sHelmChartDeploy()
+                            k8s.k8sHelmChartDeploy("${env.APPLICATION_NAME}" , "${env.DEV_ENV}" , "${env.HELM_PATH}" , "${GIT_COMMIT}" )
+                            //(appname, env, helmChartPath, imageTag)
                             echo "Deployed to DEV Environment Successfully !!!!!"
                         }
                     }
