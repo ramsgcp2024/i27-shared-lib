@@ -43,8 +43,8 @@ def call(Map pipelineParams) {
                     )
         }
         environment {
-            //APPLICATION_NAME = "eureka"
-            APPLICATION_NAME = "${pipelineParams.appName}" 
+            APPLICATION_NAME = "eureka"
+            //APPLICATION_NAME = "${pipelineParams.appName}" 
             SONAR_URL = "http://34.125.122.109:9000/"
             SONAR_TOKEN = credentials('sonar_creds')
             POM_VERSION = readMavenPom().getVersion()
