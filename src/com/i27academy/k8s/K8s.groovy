@@ -45,15 +45,17 @@ class K8s {
     def gitClone() {
         jenkins.sh """
         echo " ******** Executing git clone groovy method ************ "
-        ls -la
+        if ${WORKSPACE}/i27-shared-lib; then
+        rm -rf i27-shared-lib
+        else
         git clone -b main https://github.com/ramsgcp2024/i27-shared-lib.git
-        echo "listing the file after clone"
+        fi
         """
     }
 
     
 }
-  //if ${WORKSPACE}/
+  //
 //gcloud container clusters get-credentials cart-cluster --zone us-west1-a --project instant-droplet-410306
 
 // # gcloud auth activate-service-account jenkins@instant-droplet-410306.iam.gserviceaccount.com --key-file=${}
