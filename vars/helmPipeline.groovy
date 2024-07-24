@@ -74,9 +74,9 @@ def call(Map pipelineParams) {
             stage('Checkout') {
                 steps {
                     println("Checkout: Cloning git repo for I27-Share-Library *******")
-                    script() {
+                //    script() {
                        // k8s.gitClone()
-                    }
+                  //  }
                 }
             }
             stage('Authentication') {
