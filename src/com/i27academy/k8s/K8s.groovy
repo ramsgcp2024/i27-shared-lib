@@ -45,7 +45,7 @@ class K8s {
     def gitClone() {
         jenkins.sh """
         echo " ******** Executing git clone groovy method ************ "
-        if "${WORKSPACE}"/i27-shared-lib; then
+        if i27-shared-lib; then
         rm -rf i27-shared-lib
         else
         git clone -b main https://github.com/ramsgcp2024/i27-shared-lib.git
