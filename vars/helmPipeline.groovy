@@ -1,3 +1,4 @@
+
 import com.i27academy.builds.Docker
 import com.i27academy.k8s.K8s
 
@@ -43,8 +44,8 @@ def call(Map pipelineParams) {
                     )
         }
         environment {
-            APPLICATION_NAME = "eureka"
-            //APPLICATION_NAME = "${pipelineParams.appName}" 
+            //APPLICATION_NAME = "eureka"
+            APPLICATION_NAME = "${pipelineParams.appName}" 
             SONAR_URL = "http://34.125.122.109:9000/"
             SONAR_TOKEN = credentials('sonar_creds')
             POM_VERSION = readMavenPom().getVersion()
@@ -55,10 +56,10 @@ def call(Map pipelineParams) {
             GKE_DEV_CLUSTER_NAME = "cart-cluster" //cart-dev-ns
             GKE_DEV_ZONE = "us-west1-a"
             GKE_DEV_PROJECT = "instant-droplet-410306"
-            K8S_DEV_FILE = "eureka_dev.yaml"
-            K8S_TST_FILE = "eureka_tst.yaml"
-            K8S_STAGE_FILE = "eureka_stage.yaml"
-            K8S_PROD_FILE = "eureka_prod.yaml"
+            K8S_DEV_FILE = "k8s_dev.yaml"
+            K8S_TST_FILE = "k8s_tst.yaml"
+            K8S_STAGE_FILE = "k8s_stage.yaml"
+            K8S_PROD_FILE = "k8s_prod.yaml"
             K8S_DEV_NAMESPACE = "cart-dev-ns"
             K8S_TST_NAMESPACE = "cart-tst-ns"
             K8S_STAGE_NAMESPACE = "cart-stage-ns"
@@ -83,7 +84,6 @@ def call(Map pipelineParams) {
                     echo "Executing GCP project"
                     script {
                         k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
-
                     }
                     
                 }
@@ -181,7 +181,8 @@ def call(Map pipelineParams) {
                             //dockerDeploy('Test','6561','8761').call()
                             def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                             k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
-                            k8s.k8sdeploy("${env.K8S_TST_FILE}", "${env.K8S_TST_NAMESPACE}", docker_image)
+                            //k8s.k8sdeploy("${env.K8S_TST_FILE}", "${env.K8S_TST_NAMESPACE}", docker_image)
+                            k8s.k8sHelmChartDeploy("${env.APPLICATION_NAME}" , "${env.TST_ENV}" , "${env.HELM_PATH}" , "${GIT_COMMIT}" )
                             echo "Deployed to TEST Environment Successfully !!!!!"
                         }
                     }
@@ -200,7 +201,8 @@ def call(Map pipelineParams) {
                             //dockerDeploy('Preprod','7561','8761').call()
                             def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                             k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
-                            k8s.k8sdeploy("${env.K8S_STAGE_FILE}", "${env.K8S_STAGE_NAMESPACE}", docker_image)
+                            k8s.k8sHelmChartDeploy("${env.APPLICATION_NAME}" , "${env.STAGE_ENV}" , "${env.HELM_PATH}" , "${GIT_COMMIT}" )
+                            //k8s.k8sdeploy("${env.K8S_STAGE_FILE}", "${env.K8S_STAGE_NAMESPACE}", docker_image)
                             echo "Deployed to STAGE Environment Successfully !!!!!"
                         }
                     }
@@ -227,7 +229,8 @@ def call(Map pipelineParams) {
                             //dockerDeploy('Prod','8561','8761').call()
                             def docker_image =   "${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
                             k8s.auth_login("${env.GKE_DEV_CLUSTER_NAME}", "${env.GKE_DEV_ZONE}", "${env.GKE_DEV_PROJECT}")
-                            k8s.k8sdeploy("${env.K8S_PROD_FILE}", "${env.K8S_PROD_NAMESPACE}", docker_image)
+                            //k8s.k8sdeploy("${env.K8S_PROD_FILE}", "${env.K8S_PROD_NAMESPACE}", docker_image)
+                            k8s.k8sHelmChartDeploy("${env.APPLICATION_NAME}" , "${env.PROD_ENV}" , "${env.HELM_PATH}" , "${GIT_COMMIT}" )
                             echo "Deployed to PRODUCTION Environment Successfully !!!!!"
                         }
                     }
@@ -301,20 +304,13 @@ def buildApp() {
 def dockerBuildandPush() {
     return {
         echo "Starting Docker build and stage"
-            sh """
-            ls -la
-            pwd
-            cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd/
-            # echo "Listing files in .cicd folder"
-            # ls -la ./.cicd/
+            sh "cp ${WORKSPACE}/target/i27-${env.APPLICATION_NAME}-${POM_VERSION}.${POM_PACKAGING} ./.cicd/"
             echo "********************** Building DOCKER Image ***********************"
-            docker build --force-rm --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} .cicd/.
-            # docker build -t abc .
-            # docker images
+            sh "docker build --force-rm --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd"
             echo "********************** DOCKER Login ***********************"
-            docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
+            sh "docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}"
             echo "********************** DOCKER Push ***********************"
-            docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
-            """
+            sh "docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+            
     }
 }
