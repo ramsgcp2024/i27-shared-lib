@@ -1,4 +1,6 @@
 package com.i27academy.k8s
+import java.nio.file.Files
+import java.nio.file.Paths
 
 class K8s {
     def jenkins 
@@ -43,13 +45,28 @@ class K8s {
     }
 
     def gitClone() {
+        def directoryPath = '/home/ramsgcp23/jenkins/workspace/i27-eureka_main/i27-shared-lib'
         jenkins.sh """
         echo " ******** Executing git clone groovy method ************ "
         git clone -b main https://github.com/ramsgcp2024/i27-shared-lib.git
+        
+        // Check if the directory exists
+        if (!Files.exists(Paths.get(directoryPath))) {
+            try {
+                // Create the directory
+                Files.createDirectory(Paths.get(directoryPath))
+                println "Directory created: $directoryPath"
+            } catch (IOException e) {
+                println "Failed to create directory: $directoryPath"
+                e.printStackTrace()
+            }
+        } else {
+            println "Directory already exists: $directoryPath"
+        }
         """
     }
 
-    
+   
 }
   //if ${WORKSPACE}/
 //gcloud container clusters get-credentials cart-cluster --zone us-west1-a --project instant-droplet-410306
